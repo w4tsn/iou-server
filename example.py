@@ -17,7 +17,7 @@ g.add_user_with_backreference(u2)
 deposits=[iou.lib.transaction.PartialTransaction(user = u1, amount = 2000), {'user': u2, 'amount': 5000}]
 
 # Define the strategy for distributing the expenses to the users
-split = iou.lib.split.ByPercentageSplitStrategy(deposits=deposits, shares={u1: 80, u2: 20})
+split = iou.lib.split.ByPercentageSplitStrategy(deposits=deposits, split_parameters={u1: 80, u2: 20})
 
 # Create a transaction with the deposits and withdrawals (calculated using the above split strategy)
 t1 = iou.lib.transaction.Transaction(split_type=split.split_type, deposits=deposits, withdrawals=split.compute_split(), date=datetime.now())
@@ -27,7 +27,7 @@ g.add_transaction(t1)
 
 # Create another transaction
 deposits=[{'user': u1, 'amount': 4200}]
-split = iou.lib.split.EqualSplitStrategy(deposits=deposits, withdrawers=[u2])
+split = iou.lib.split.EqualSplitStrategy(deposits=deposits, split_parameters={u2:0})
 
 # Provide a split object directly instead of manually passing split_type and withdrawals. Date is also optional.
 t2 = iou.lib.transaction.Transaction(deposits=deposits, split=split)
