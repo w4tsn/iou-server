@@ -1,13 +1,16 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, List
-from pydantic import BaseModel
+
+from typing import List, Optional
+
+from pydantic import BaseModel, Field
+
+from .id import ID
 
 
 class User(BaseModel):
 
-    user_id : str
+    user_id : Optional[ID] = Field(default_factory=ID.generate)
     name : str
-    email : str
     groups : List[Group] = []
 
     def __init__(self, *args, **kwargs):
@@ -39,4 +42,5 @@ class User(BaseModel):
 
 # loading circular dependencies after everything else prevents problems with ForwardRefs introduced by pydantic
 from iou.lib.group import *
+
 User.update_forward_refs()

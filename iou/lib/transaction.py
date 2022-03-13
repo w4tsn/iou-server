@@ -3,9 +3,12 @@ from __future__ import annotations
 import functools
 from datetime import datetime
 from enum import Enum
-from typing import Dict, List, Set, Optional
+from typing import Dict, List, Optional, Set
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+
+from .id import ID
+
 
 class PartialTransaction(BaseModel):
 
@@ -30,6 +33,7 @@ class PartialTransaction(BaseModel):
 
 class Transaction(BaseModel):
 
+    transaction_id : Optional[ID] = Field(default_factory=ID.generate)
     split_type : Optional[SplitType] = None
     deposits : List[PartialTransaction]
     withdrawals : Optional[List[PartialTransaction]] = None
@@ -48,7 +52,7 @@ class Transaction(BaseModel):
         return {pt.user for pt in self.deposits + self.withdrawals}
 
 # loading circular dependencies after everything else prevents problems with ForwardRefs introduced by pydantic
-from iou.lib.split import SplitType, SplitStrategy
+from iou.lib.split import SplitStrategy, SplitType
 from iou.lib.user import User
 
 Transaction.update_forward_refs()

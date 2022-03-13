@@ -2,12 +2,13 @@ from __future__ import annotations
 
 from typing import List
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
+from .id import ID
 
 class Group(BaseModel):
 
-    group_id : str
+    group_id : Optional[ID] = Field(default_factory=ID.generate)
     users : List[User] = []
     transactions : List[Transaction] = []
 
@@ -42,7 +43,7 @@ class Group(BaseModel):
 class NamedGroup(Group):
 
     name : str
-    description : str
+    description : Optional[str] = None
 
 # loading circular dependencies after everything else prevents problems with ForwardRefs introduced by pydantic
 from iou.lib.transaction import *
