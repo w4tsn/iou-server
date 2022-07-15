@@ -7,3 +7,4 @@ htmlcov/
 pytest-cobertura.xml
 iou/_version.py
 dist/
+test.db
