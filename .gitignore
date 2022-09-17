@@ -1,3 +1,9 @@
 .venv
 __pycache__
 .vscode
+.coverage
+htmlcov/
+.pytest_cache
+pytest-cobertura.xml
+iou/_version.py
+dist/

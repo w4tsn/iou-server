@@ -1,17 +1,34 @@
 IOU
 ===
-IOU as in I o(we) (yo)u 5€.
+
+*As in I o(we) (yo)u 5€.*
 
 Shared expenses management tool that does not spy on you (currently in pre-alpha).
 
-Development
+Contributing
 ---
-```
-git clone ...
+
+```bash
+git clone ssh://git.notourserver.de:2222/victor/iou.git
 cd iou
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-pip install -r dev-requirements.txt
+python -m venv --upgrade-deps .venv
+source .venv/bin/activate{.fish} # omit depending on shell used
+pip install -e .[dev]
 python example.py
+python -m iou
+```
+
+Run linting and tests:
+
+```bash
+pytest --cov-report term --cov-report html --cov-report=xml:pytest-cobertura.xml --cov=iou test
+```
+
+Find the docs after starting the project under [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs).
+
+You may want to build a python package and upload it using twine:
+
+```bash
+python -m build
+twine upload --verbose --skip-existing dist/*
 ```
