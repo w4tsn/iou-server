@@ -58,6 +58,14 @@ class Settings(BaseSettings):
         files("iou") / "log_config.toml"
     )
 
+    # IOU_CORS_ORIGINS is a JSON-formatted list of origins
+    # e.g: '["http://localhost", "http://localhost:4200"]'
+    # note: in bash json has to be escaped: '[\"http://localhost\"]'
+    IOU_CORS_ORIGINS: List[AnyHttpUrl] = ["http://localhost:8000"]
+    # IOU_CORS_ORIGIN_REGEX is a pattern string
+    # e.g: 'https://.*\.example\.com
+    IOU_CORS_ORIGIN_REGEX: Pattern = r"https://.*\.notourserver\.de"
+
     class Config:
         # pylint: disable=too-few-public-methods
         """Static configuration"""
