@@ -16,12 +16,14 @@ source .venv/bin/activate{.fish} # omit depending on shell used
 pip install -e .[dev]
 python example.py
 python -m iou
+pre-commit install # sets up static type checking, linting, etc.
 ```
 
 Run linting and tests:
 
 ```bash
 pytest --cov-report term --cov-report html --cov-report=xml:pytest-cobertura.xml --cov=iou test
+pre-commit run --all
 ```
 
 Find the docs after starting the project under [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs).
