@@ -67,7 +67,7 @@ class UnequalSplitStrategy(SplitStrategy):
     split_type: ClassVar[SplitType] = SplitType.UNEQUAL
 
     def compute_split(self) -> List[PartialTransaction]:
-        return [PartialTransaction(**item) for item in self.split_parameters.items()]
+        return [PartialTransaction(*item) for item in self.split_parameters.items()]
 
 
 class ByShareSplitStrategy(SplitStrategy):
