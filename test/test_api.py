@@ -1,6 +1,7 @@
 import json
 from abc import ABC, abstractmethod
 from datetime import datetime
+from typing import Any, Dict
 
 import pytest
 from httpx import AsyncClient
@@ -36,6 +37,21 @@ class AbstractTestAPI(ABC):
             NamedGroup(group_id=ID("group"), users=self.database.get_users())
         )
 
+    async def _test_transaction_create_request(
+        self, iou_client: AsyncClient, body: Dict[str, Any], expected: Dict[str, Any]
+    ) -> None:
+        """Make a transaction create request"""
+        response = await iou_client.post(
+            "/api/v1/groups/group/transactions",
+            headers={"content-type": "application/json"},
+            content=json.dumps(body),
+        )
+        assert response.status_code == 200, response.text
+        response_body = response.json()
+        assert response_body["split_type"] == expected["split_type"]
+        assert response_body["deposits"] == expected["deposits"]
+        assert response_body["withdrawals"] == expected["withdrawals"]
+
     @pytest.mark.asyncio
     async def test_create_user(self, iou_client: AsyncClient) -> None:
         response = await iou_client.post(
@@ -61,23 +77,125 @@ class AbstractTestAPI(ABC):
         assert response.json()["name"] == "My group"
 
     @pytest.mark.asyncio
-    async def test_create_group_transaction(self, iou_client: AsyncClient) -> None:
-        transaction = {
-            "split_type": "equal",
-            "date": str(datetime(2022, 1, 1)),
-            "deposits": {"alex": 420},
-            "split_parameters": {"victor": 0, "alex": 0},
-        }
-        response = await iou_client.post(
-            "/api/v1/groups/group/transactions",
-            headers={"content-type": "application/json"},
-            content=json.dumps(transaction),
+    async def test_create_group_transaction_equal(
+        self, iou_client: AsyncClient
+    ) -> None:
+        await self._test_transaction_create_request(
+            iou_client,
+            body={
+                "split_type": "equal",
+                "date": str(datetime(2022, 1, 1)),
+                "deposits": {"alex": 420},
+                "split_parameters": {"victor": 0, "alex": 0},
+            },
+            expected={
+                "split_type": "equal",
+                "deposits": {"alex": 420},
+                "withdrawals": {"victor": 210, "alex": 210},
+            },
         )
-        assert response.status_code == 200, response.json()
-        response_body = response.json()
-        assert response_body["split_type"] == "equal"
-        assert response_body["deposits"] == {"alex": 420}
-        assert response_body["withdrawals"] == {"victor": 210, "alex": 210}
+
+    @pytest.mark.asyncio
+    async def test_create_group_transaction_by_share(
+        self, iou_client: AsyncClient
+    ) -> None:
+        await self._test_transaction_create_request(
+            iou_client,
+            body={
+                "split_type": "by_share",
+                "date": str(datetime(2022, 1, 1)),
+                "deposits": {"alex": 100},
+                "split_parameters": {"victor": 4, "alex": 6},
+            },
+            expected={
+                "split_type": "by_share",
+                "deposits": {"alex": 100},
+                "withdrawals": {"victor": 40, "alex": 60},
+            },
+        )
+
+    @pytest.mark.asyncio
+    async def test_create_group_transaction_by_percentage(
+        self, iou_client: AsyncClient
+    ) -> None:
+        await self._test_transaction_create_request(
+            iou_client,
+            body={
+                "split_type": "by_percentage",
+                "date": str(datetime(2022, 1, 1)),
+                "deposits": {"alex": 300},
+                "split_parameters": {"victor": 33, "alex": 67},
+            },
+            expected={
+                "split_type": "by_percentage",
+                "deposits": {"alex": 300},
+                "withdrawals": {
+                    "victor": pytest.approx(100, rel=1e-2),
+                    "alex": pytest.approx(200, rel=1e-2),
+                },
+            },
+        )
+
+    @pytest.mark.asyncio
+    async def test_create_group_transaction_invalid_split(
+        self, iou_client: AsyncClient
+    ) -> None:
+        with pytest.raises(AssertionError):
+            await self._test_transaction_create_request(
+                iou_client,
+                body={
+                    "split_type": "by_percentage",
+                    "date": str(datetime(2022, 1, 1)),
+                    "deposits": {"alex": 300},
+                    "split_parameters": {"victor": 20, "alex": 60},
+                },
+                expected={
+                    "split_type": "by_percentage",
+                    "deposits": {"alex": 300},
+                    "withdrawals": {
+                        "victor": pytest.approx(100, rel=1e-2),
+                        "alex": pytest.approx(200, rel=1e-2),
+                    },
+                },
+            )
+
+    @pytest.mark.asyncio
+    async def test_create_group_transaction_by_adjustment(
+        self, iou_client: AsyncClient
+    ) -> None:
+        await self._test_transaction_create_request(
+            iou_client,
+            body={
+                "split_type": "by_adjustment",
+                "date": str(datetime(2022, 1, 1)),
+                "deposits": {"alex": 200},
+                "split_parameters": {"victor": 0, "alex": 100},
+            },
+            expected={
+                "split_type": "by_adjustment",
+                "deposits": {"alex": 200},
+                "withdrawals": {"victor": 50, "alex": 150},
+            },
+        )
+
+    @pytest.mark.asyncio
+    async def test_create_group_transaction_unequal(
+        self, iou_client: AsyncClient
+    ) -> None:
+        await self._test_transaction_create_request(
+            iou_client,
+            body={
+                "split_type": "unequal",
+                "date": str(datetime(2022, 1, 1)),
+                "deposits": {"alex": 200},
+                "split_parameters": {"victor": 50, "alex": 150},
+            },
+            expected={
+                "split_type": "unequal",
+                "deposits": {"alex": 200},
+                "withdrawals": {"victor": 50, "alex": 150},
+            },
+        )
 
     @pytest.mark.asyncio
     async def test_group_balances(self, iou_client: AsyncClient) -> None:
