@@ -25,6 +25,7 @@ dynamic = ["version", "description"]
 
 [project.optional-dependencies]
 dev = [
+    "types-sqlalchemy>=1.4,<2.0",
     "pytest",
     "pytest-cov",
     "pytest-asyncio",

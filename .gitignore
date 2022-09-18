@@ -8,3 +8,4 @@ pytest-cobertura.xml
 iou/_version.py
 dist/
 test.db
+.mypy_cache

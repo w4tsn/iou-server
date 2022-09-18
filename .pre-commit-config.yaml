@@ -34,4 +34,4 @@ repos:
       entry: env MYPYPATH=stubs/ mypy
       language: system
       types_or: [python, pyi]
-exclude: example.py
+exclude: alembic/.*|example.py
