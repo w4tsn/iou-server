@@ -112,7 +112,7 @@ class ByAdjustmentSplitStrategy(SplitStrategy):
             for withdrawer, amount in {
                 withdrawer: adjustment + equal_amount
                 for withdrawer, adjustment in self.split_parameters.items()
-            }
+            }.items()
         ]
 
 
