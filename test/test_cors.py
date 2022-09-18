@@ -1,5 +1,5 @@
-from fastapi.testclient import TestClient
 import pytest
+from fastapi.testclient import TestClient
 from httpx import AsyncClient
 
 from iou.main import app
@@ -20,7 +20,9 @@ async def test_response_cors_headers_origins(iou_client: AsyncClient) -> None:
 @pytest.mark.asyncio
 async def test_response_cors_headers_origins_regex(iou_client: AsyncClient) -> None:
     """Test CORS header regex"""
-    response = await iou_client.get("/", headers={"origin": "https://iou.notourserver.de"})
+    response = await iou_client.get(
+        "/", headers={"origin": "https://iou.notourserver.de"}
+    )
     assert response.status_code == 200
     assert "access-control-allow-origin" in response.headers
     assert (

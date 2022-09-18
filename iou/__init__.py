@@ -1,4 +1,3 @@
-
 """IOU"""
 
 from ._version import VERSION as __version__  # noqa: F401
@@ -15,7 +14,7 @@ def run() -> None:
 
     import uvicorn  # type: ignore # https://github.com/encode/uvicorn/issues/998
 
-    from .config import Environment, settings  # noqa: 402
+    from iou.config import Environment, settings  # noqa: 402
 
     Process(
         target=uvicorn.run,

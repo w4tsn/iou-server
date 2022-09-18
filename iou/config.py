@@ -6,13 +6,14 @@ Allows configuration from environment variables.
 
 import logging
 import logging.config
+import re
 from enum import Enum
 from importlib.abc import Traversable
 from importlib.resources import files
 from typing import BinaryIO, List, Pattern, Union
 
 import tomli
-from pydantic import AnyHttpUrl, BaseSettings
+from pydantic import AnyHttpUrl, BaseSettings, tools
 
 
 class Environment(Enum):
@@ -54,17 +55,17 @@ class Settings(BaseSettings):
     IOU_SERVER_PORT: int = 8000
     IOU_ENVIRONMENT: Environment = Environment.DEVELOP
 
-    IOU_LOG_CONFIG_FILE: Union[str, Traversable] = (
-        files("iou") / "log_config.toml"
-    )
+    IOU_LOG_CONFIG_FILE: Union[str, Traversable] = files("iou") / "log_config.toml"
 
     # IOU_CORS_ORIGINS is a JSON-formatted list of origins
     # e.g: '["http://localhost", "http://localhost:4200"]'
     # note: in bash json has to be escaped: '[\"http://localhost\"]'
-    IOU_CORS_ORIGINS: List[AnyHttpUrl] = ["http://localhost:8000"]
+    IOU_CORS_ORIGINS: List[AnyHttpUrl] = [
+        tools.parse_obj_as(AnyHttpUrl, "http://localhost:8000")
+    ]
     # IOU_CORS_ORIGIN_REGEX is a pattern string
     # e.g: 'https://.*\.example\.com
-    IOU_CORS_ORIGIN_REGEX: Pattern = r"https://.*\.notourserver\.de"
+    IOU_CORS_ORIGIN_REGEX: Pattern[str] = re.compile(r"https://.*\.notourserver\.de")
 
     class Config:
         # pylint: disable=too-few-public-methods
