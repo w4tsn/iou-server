@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from typing import ClassVar, Dict, List, Set, Type
 
-from pydantic import BaseModel, validator
+from pydantic import BaseModel
 
 
 class SplitType(str, Enum):
@@ -90,12 +90,11 @@ class ByPercentageSplitStrategy(ByShareSplitStrategy):
 
     split_type: ClassVar[SplitType] = SplitType.BY_PERCENTAGE
 
-    @classmethod
-    @validator("split_parameters")
-    def _share_total(cls, shares_dict: Dict[User, int]) -> Dict[User, int]:
-        if sum(shares_dict.values()) != 100:
-            raise ValueError("Percentage shares must add up to 100")
-        return shares_dict
+    def compute_split(self) -> List[PartialTransaction]:
+        assert (
+            sum(self.split_parameters.values()) == 100
+        ), "Percentage shares must add up to 100"
+        return super().compute_split()
 
 
 class ByAdjustmentSplitStrategy(SplitStrategy):
