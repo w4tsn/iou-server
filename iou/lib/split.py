@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import functools
 from abc import ABC, abstractmethod
 from enum import Enum
 from typing import ClassVar, Dict, List, Set, Type
@@ -45,7 +44,7 @@ class SplitStrategy(BaseModel, ABC):
         )
 
     def total(self) -> int:
-        return functools.reduce(lambda s, d: s + d.amount, self.deposits, 0)
+        return PartialTransaction.reduce(self.deposits)
 
 
 class EqualSplitStrategy(SplitStrategy):
