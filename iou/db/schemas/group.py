@@ -14,7 +14,11 @@ group_membership_table = Table(
 class Group(Base):
 
     group_id = Column(String, primary_key=True, index=True)
+    name = Column(String, index=True)
+    description = Column(String)
     users = relationship(
-        "User", secondary=group_membership_table, back_populates="groups"
+        "User", secondary=group_membership_table, back_populates="groups", lazy="joined"
     )
-    transactions = relationship("Transaction")
+    transactions = relationship(
+        "Transaction", cascade="all, delete-orphan", lazy="joined"
+    )

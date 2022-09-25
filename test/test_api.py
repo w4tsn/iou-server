@@ -1,15 +1,17 @@
 import json
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Any, Dict
+from typing import Any, Dict, Generator
 
 import pytest
 from httpx import AsyncClient
 
+from iou.api.dependencies import get_db
 from iou.db.db_interface import IouDBInterface
 from iou.lib.group import NamedGroup
 from iou.lib.id import ID
 from iou.lib.user import User
+from iou.main import app
 
 
 class AbstractTestAPI(ABC):
@@ -64,7 +66,7 @@ class AbstractTestAPI(ABC):
         assert isinstance(response.json()["user_id"], str)
         assert self.database.get_user(response.json()["user_id"]) == User(
             **response.json()
-        )
+        ), response.json()
 
     @pytest.mark.asyncio
     async def test_create_group(self, iou_client: AsyncClient) -> None:
@@ -218,8 +220,45 @@ class AbstractTestAPI(ABC):
 
 
 class TestAPIMockDB(AbstractTestAPI):
+    @pytest.fixture(autouse=True)
+    def use_mock_db(self) -> Generator[None, None, None]:
+        # Only initialize db within the context of this method
+        # pylint: disable=import-outside-toplevel
+        from iou.db.mock_db import MockDB
+
+        app.dependency_overrides[get_db] = MockDB.instance
+        yield
+        app.dependency_overrides = {}
+
     def create_db(self) -> None:
         # pylint: disable=import-outside-toplevel
         from iou.db.mock_db import MockDB
 
         self.database = MockDB.instance()
+
+
+class TestAPISqlDB(AbstractTestAPI):
+    @pytest.fixture(scope="session", autouse=True)
+    def cleanup_db(self) -> None:
+        # Only initialize db within the context of this method
+        # pylint: disable=import-outside-toplevel
+        from iou.db.sql_db import dispose_database_tables
+
+        dispose_database_tables()
+
+    @pytest.fixture(scope="function", autouse=True)
+    def init(self) -> Generator[None, None, None]:
+        # Only initialize db within the context of this method
+        # pylint: disable=import-outside-toplevel
+        from iou.db.sql_db import dispose_database_tables, init_database_tables
+
+        init_database_tables()
+        yield
+        dispose_database_tables()
+
+    def create_db(self) -> None:
+        # Only initialize db within the context of this method
+        # pylint: disable=import-outside-toplevel
+        from iou.db.sql_db import SqlDb
+
+        self.database = SqlDb.instance()

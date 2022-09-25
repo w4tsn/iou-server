@@ -1,6 +1,6 @@
 from iou.db.db_interface import IouDBInterface
-from iou.db.mock_db import MockDB
+from iou.db.sql_db import SqlDb
 
 
 def get_db() -> IouDBInterface:
-    return MockDB.instance()
+    return SqlDb.instance()

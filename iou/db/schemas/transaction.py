@@ -12,8 +12,10 @@ class Transaction(Base):
     transaction_id = Column(String, primary_key=True, index=True)
     group_id = Column(String, ForeignKey("group.group_id"))
     split_type = Column(Enum(SplitType))
-    deposits = relationship("Deposit")
-    withdrawals = relationship("Withdrawal")
+    deposits = relationship("Deposit", cascade="all, delete-orphan", lazy="joined")
+    withdrawals = relationship(
+        "Withdrawal", cascade="all, delete-orphan", lazy="joined"
+    )
     date = Column(DateTime(timezone=True), server_default=func.now())
 
 

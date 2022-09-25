@@ -59,6 +59,9 @@ class Transaction(BaseModel):
     def users(self) -> Set[User]:
         return {pt.user for pt in self.deposits + self.withdrawals}
 
+    class Config:
+        orm_mode = True
+
 
 # loading circular dependencies after everything else prevents problems with ForwardRefs introduced by pydantic
 from iou.lib.split import SplitStrategy, SplitType

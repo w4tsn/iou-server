@@ -11,6 +11,7 @@ class User(BaseModel):
 
     user_id: ID = Field(default_factory=ID.generate)
     name: str
+    email: str
     groups: List[Group] = []
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
@@ -39,6 +40,9 @@ class User(BaseModel):
 
     def balance(self) -> int:
         return sum(group.balance_for(self) for group in self.groups)
+
+    class Config:
+        orm_mode = True
 
 
 # loading circular dependencies after everything else prevents problems

@@ -7,6 +7,7 @@ import iou.db.schemas.base as iou_db_model
 # alembic.context is only available through the alembic CLI
 # pylint: disable=no-name-in-module
 from alembic import context
+from iou.config import settings
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -38,7 +39,7 @@ def run_migrations_offline():
     script output.
 
     """
-    url = config.get_main_option("sqlalchemy.url")
+    url = settings.IOU_DATABASE_SQLALCHEMY_URL
     context.configure(
         url=url,
         target_metadata=target_metadata,

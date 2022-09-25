@@ -69,11 +69,17 @@ class Group(BaseModel):
             transaction = None
         return transaction
 
+    class Config:
+        orm_mode = True
+
 
 class NamedGroup(Group):
 
     name: str = str(uuid.uuid4())
     description: Optional[str] = None
+
+    class Config:
+        orm_mode = True
 
 
 # loading circular dependencies after everything else prevents problems with

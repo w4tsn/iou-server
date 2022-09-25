@@ -67,6 +67,8 @@ class Settings(BaseSettings):
     # e.g: 'https://.*\.example\.com
     IOU_CORS_ORIGIN_REGEX: Pattern[str] = re.compile(r"https://.*\.notourserver\.de")
 
+    IOU_DATABASE_SQLALCHEMY_URL: str = "sqlite:///./iou.db"
+
     class Config:
         # pylint: disable=too-few-public-methods
         """Static configuration"""
