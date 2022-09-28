@@ -8,9 +8,6 @@ authors = [
     { name = "Alexander Wellbrock", email = "a.wellbrock@mailbox.org" },
     { name = "Victor Schümmer", email = "notourserver+dev@posteo.net" }
 ]
-classifiers = [
-    "Private :: Do Not Upload",
-]
 requires-python = ">=3.9"
 dependencies = [
     "pydantic>=1.9,<2.0",
@@ -43,7 +40,7 @@ dev = [
 ]
 
 [project.urls]
-Home = "https://git.notourserver.de/victor/iou"
+Home = "https://git.notourserver.de/iou/server"
 
 [project.scripts]
 iou = "iou:run"
