@@ -10,7 +10,6 @@ from iou.lib.id import ID
 
 
 class PartialTransaction(BaseModel):
-
     user: User
     amount: int
 
@@ -34,7 +33,6 @@ class PartialTransaction(BaseModel):
 
 
 class Transaction(BaseModel):
-
     transaction_id: Optional[ID] = Field(default_factory=ID.generate)
     split_type: Optional[SplitType] = None
     deposits: List[PartialTransaction]

@@ -13,7 +13,6 @@ logger = logging.getLogger(__name__)
 
 
 class IouDBInterface(BaseModel, ABC):
-
     _instance: Optional[IouDBInterface] = None
 
     @classmethod

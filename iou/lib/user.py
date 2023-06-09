@@ -8,7 +8,6 @@ from iou.lib.id import ID
 
 
 class User(BaseModel):
-
     user_id: ID = Field(default_factory=ID.generate)
     name: str
     email: str

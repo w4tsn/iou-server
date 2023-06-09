@@ -125,7 +125,6 @@ def dispose_database_tables() -> None:
 
 
 class SqlDb(IouDBInterface):
-
     _session: Optional[Session] = None
 
     def __enter__(self) -> "SqlDb":

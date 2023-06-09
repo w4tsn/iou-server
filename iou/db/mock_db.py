@@ -8,7 +8,6 @@ from iou.lib.user import User
 
 
 class MockDB(IouDBInterface):
-
     _users: Dict[str, User] = {}
     _groups: Dict[str, Group] = {}
 

@@ -7,7 +7,6 @@ from sqlalchemy.schema import MetaData
 
 @as_declarative()
 class Base(AbstractConcreteBase):
-
     id: Any
     __name__: str
     metadata: MetaData

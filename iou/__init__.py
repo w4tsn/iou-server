@@ -12,7 +12,7 @@ def run() -> None:
     # pylint: disable=import-outside-toplevel
     from multiprocessing import Process
 
-    import uvicorn  # type: ignore # https://github.com/encode/uvicorn/issues/998
+    import uvicorn
 
     from iou.config import Environment, settings  # noqa: 402
 

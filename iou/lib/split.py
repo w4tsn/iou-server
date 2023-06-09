@@ -8,7 +8,6 @@ from pydantic import BaseModel
 
 
 class SplitType(str, Enum):
-
     BY_SHARE = "by_share"
     BY_PERCENTAGE = "by_percentage"
     BY_ADJUSTMENT = "by_adjustment"
@@ -17,7 +16,6 @@ class SplitType(str, Enum):
 
 
 class SplitStrategy(BaseModel, ABC):
-
     split_type: ClassVar[SplitType]
     split_parameters: Dict[User, int]
     deposits: List[PartialTransaction]
@@ -48,7 +46,6 @@ class SplitStrategy(BaseModel, ABC):
 
 
 class EqualSplitStrategy(SplitStrategy):
-
     split_type: ClassVar[SplitType] = SplitType.EQUAL
 
     def withdrawers(self) -> List[User]:
@@ -63,7 +60,6 @@ class EqualSplitStrategy(SplitStrategy):
 
 
 class UnequalSplitStrategy(SplitStrategy):
-
     split_type: ClassVar[SplitType] = SplitType.UNEQUAL
 
     def compute_split(self) -> List[PartialTransaction]:
@@ -71,7 +67,6 @@ class UnequalSplitStrategy(SplitStrategy):
 
 
 class ByShareSplitStrategy(SplitStrategy):
-
     split_type: ClassVar[SplitType] = SplitType.BY_SHARE
 
     def compute_split(self) -> List[PartialTransaction]:
@@ -87,7 +82,6 @@ class ByShareSplitStrategy(SplitStrategy):
 
 
 class ByPercentageSplitStrategy(ByShareSplitStrategy):
-
     split_type: ClassVar[SplitType] = SplitType.BY_PERCENTAGE
 
     def compute_split(self) -> List[PartialTransaction]:
@@ -98,7 +92,6 @@ class ByPercentageSplitStrategy(ByShareSplitStrategy):
 
 
 class ByAdjustmentSplitStrategy(SplitStrategy):
-
     split_type: ClassVar[SplitType] = SplitType.BY_ADJUSTMENT
 
     def compute_split(self) -> List[PartialTransaction]:

@@ -12,7 +12,6 @@ group_membership_table = Table(
 
 
 class Group(Base):
-
     group_id = Column(String, primary_key=True, index=True)
     name = Column(String, index=True)
     description = Column(String)

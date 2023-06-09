@@ -6,7 +6,6 @@ from .group import group_membership_table
 
 
 class User(Base):
-
     user_id = Column(String, primary_key=True, index=True)
     name = Column(String, index=True)
     email = Column(String, unique=True, index=True, nullable=False)

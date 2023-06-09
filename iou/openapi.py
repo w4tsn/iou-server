@@ -3,7 +3,7 @@ import os
 
 import click
 from fastapi import FastAPI
-from uvicorn.importer import import_from_string  # type: ignore
+from uvicorn.importer import import_from_string
 
 
 @click.command()

@@ -14,22 +14,18 @@ class UserID(ID):
 
 
 class UserBase(BaseModel):
-
     name: Optional[str]
     email: Optional[str]
 
 
 class UserIn(UserBase):
-
     pass
 
 
 class UserUpdate(UserBase):
-
     name: Optional[str]
     email: Optional[str]
 
 
 class UserOut(UserBase):
-
     user_id: UserID

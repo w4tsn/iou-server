@@ -17,15 +17,10 @@ repos:
   rev: 5.12.0
   hooks:
     - id: isort
-- repo: https://github.com/pycqa/pylint
-  rev: v2.16.2
+- repo: https://github.com/charliermarsh/ruff-pre-commit
+  rev: v0.0.265
   hooks:
-    - id: pylint
-      additional_dependencies: ['pylint_fixme_info']
-- repo: https://github.com/pycqa/flake8
-  rev: 6.0.0
-  hooks:
-    - id: flake8
+    - id: ruff
 - repo: local
   # mypy needs to run in our venv, so use a system-type hook
   hooks:

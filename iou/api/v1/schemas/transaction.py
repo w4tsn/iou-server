@@ -9,19 +9,16 @@ from iou.lib.transaction import Transaction
 
 
 class TransactionBase(BaseModel):
-
     split_type: SplitType
     date: Optional[datetime]
 
 
 class TransactionIn(TransactionBase):
-
     deposits: Dict[UserID, int]
     split_parameters: Dict[UserID, Any]
 
 
 class TransactionOut(TransactionBase):
-
     deposits: Dict[UserID, int]
     withdrawals: Dict[UserID, int]
 
@@ -38,5 +35,5 @@ class TransactionOut(TransactionBase):
         return cls(
             **transaction.dict(exclude={"deposits", "withdrawals"}),
             deposits=deposits,
-            withdrawals=withdrawals
+            withdrawals=withdrawals,
         )

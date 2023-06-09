@@ -9,7 +9,6 @@ from iou.lib.id import ID
 
 
 class Group(BaseModel):
-
     group_id: ID = Field(default_factory=ID.generate)
     users: List[User] = []
     transactions: List[Transaction] = []
@@ -74,7 +73,6 @@ class Group(BaseModel):
 
 
 class NamedGroup(Group):
-
     name: str = str(uuid.uuid4())
     description: Optional[str] = None
 

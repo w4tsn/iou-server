@@ -15,7 +15,6 @@ from iou.main import app
 
 
 class AbstractTestAPI(ABC):
-
     database: IouDBInterface
 
     @pytest.fixture(autouse=True)
