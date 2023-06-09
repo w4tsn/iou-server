@@ -44,7 +44,10 @@ class AbstractTestAPI(ABC):
         """Make a transaction create request"""
         response = await iou_client.post(
             "/api/v1/groups/group/transactions",
-            headers={"content-type": "application/json"},
+            headers={
+                "content-type": "application/json",
+                "x-iou-pre-authenticated": "test-user",
+            },
             content=json.dumps(body),
         )
         assert response.status_code == 200, response.text
@@ -57,7 +60,10 @@ class AbstractTestAPI(ABC):
     async def test_create_user(self, iou_client: AsyncClient) -> None:
         response = await iou_client.post(
             "/api/v1/users",
-            headers={"content-type": "application/json"},
+            headers={
+                "content-type": "application/json",
+                "x-iou-pre-authenticated": "test-user",
+            },
             content=json.dumps({"name": "Dr. Evil", "email": "evil@example.com"}),
         )
         assert response.status_code == 200, response.json()
@@ -71,7 +77,10 @@ class AbstractTestAPI(ABC):
     async def test_create_group(self, iou_client: AsyncClient) -> None:
         response = await iou_client.post(
             "/api/v1/groups",
-            headers={"content-type": "application/json"},
+            headers={
+                "content-type": "application/json",
+                "x-iou-pre-authenticated": "test-user",
+            },
             content=json.dumps({"name": "My group"}),
         )
         assert response.status_code == 200, response.json()
@@ -202,7 +211,10 @@ class AbstractTestAPI(ABC):
     async def test_group_balances(self, iou_client: AsyncClient) -> None:
         response = await iou_client.get(
             "/api/v1/groups/group/balances",
-            headers={"content-type": "application/json"},
+            headers={
+                "content-type": "application/json",
+                "x-iou-pre-authenticated": "test-user",
+            },
         )
         assert response.status_code == 200, response.json()
         response_body = response.json()
@@ -212,7 +224,10 @@ class AbstractTestAPI(ABC):
     async def test_group_user_balance(self, iou_client: AsyncClient) -> None:
         response = await iou_client.get(
             "/api/v1/groups/group/balances/alex",
-            headers={"content-type": "application/json"},
+            headers={
+                "content-type": "application/json",
+                "x-iou-pre-authenticated": "test-user",
+            },
         )
         assert response.status_code == 200, response.json()
         assert response.json() == 0
