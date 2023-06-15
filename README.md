@@ -14,6 +14,7 @@ cd iou
 python -m venv --upgrade-deps .venv
 source .venv/bin/activate{.fish} # omit depending on shell used
 pip install -e .[dev]
+alembic upgrade head # apply database migrations to local iou.db
 python example.py
 python -m iou
 pre-commit install # sets up static type checking, linting, etc.
@@ -33,4 +34,26 @@ You may want to build a python package and upload it using twine:
 ```bash
 python -m build
 twine upload --verbose --skip-existing dist/*
+```
+
+Manage database migrations:
+
+Alembic is used to compose and apply database migration scripts.
+
+Check if migrations are missing:
+
+```
+alembic check
+```
+
+Then generate a new migration:
+
+```
+alembic revision --autogenerate
+```
+
+Apply the latest migration:
+
+```
+alembic upgrade head
 ```
