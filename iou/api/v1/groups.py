@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Annotated, Dict, List
 
 from fastapi import APIRouter, Depends, status
 
@@ -18,18 +18,17 @@ router = APIRouter()
 
 @router.get("", response_model=List[GroupOut])
 def read_groups(
-    authentication: Authentication = Depends(dependencies.get_authentication),
-    database: IouDBInterface = Depends(dependencies.get_db),
+    authentication: Annotated[Authentication, Depends(dependencies.get_authentication)],
+    database: Annotated[IouDBInterface, Depends(dependencies.get_db)],
 ) -> List[GroupOut]:
     return [GroupOut.from_orm(group) for _, group in database.groups().items()]
 
 
 @router.post("", response_model=GroupOut)
 def create_group(
-    *,
-    authentication: Authentication = Depends(dependencies.get_authentication),
-    database: IouDBInterface = Depends(dependencies.get_db),
     new_group: GroupIn,
+    authentication: Annotated[Authentication, Depends(dependencies.get_authentication)],
+    database: Annotated[IouDBInterface, Depends(dependencies.get_db)],
 ) -> GroupOut:
     group = NamedGroup(**new_group.dict())
     database.add_group(group)
@@ -38,21 +37,19 @@ def create_group(
 
 @router.get("/{group_id}", response_model=GroupOut)
 def read_group(
-    *,
-    authentication: Authentication = Depends(dependencies.get_authentication),
-    database: IouDBInterface = Depends(dependencies.get_db),
     group_id: str,
+    authentication: Annotated[Authentication, Depends(dependencies.get_authentication)],
+    database: Annotated[IouDBInterface, Depends(dependencies.get_db)],
 ) -> GroupOut:
     return GroupOut.from_orm(utils.get_group(database, group_id))
 
 
 @router.patch("/{group_id}", response_model=GroupOut)
 def patch_group(
-    *,
-    authentication: Authentication = Depends(dependencies.get_authentication),
     group_id: str,
-    database: IouDBInterface = Depends(dependencies.get_db),
     group_update: GroupUpdate,
+    authentication: Annotated[Authentication, Depends(dependencies.get_authentication)],
+    database: Annotated[IouDBInterface, Depends(dependencies.get_db)],
 ) -> GroupOut:
     return GroupOut.from_orm(
         database.update_group(group_id, NamedGroup(**group_update.dict()))
@@ -61,9 +58,8 @@ def patch_group(
 
 @router.delete("/{group_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_group(
-    *,
-    authentication: Authentication = Depends(dependencies.get_authentication),
-    database: IouDBInterface = Depends(dependencies.get_db),
+    authentication: Annotated[Authentication, Depends(dependencies.get_authentication)],
+    database: Annotated[IouDBInterface, Depends(dependencies.get_db)],
     group_id: str,
 ) -> None:
     database.delete_group(group_id)
@@ -71,11 +67,10 @@ def delete_group(
 
 @router.put("/{group_id}/users/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
 def add_user(
-    *,
-    authentication: Authentication = Depends(dependencies.get_authentication),
-    database: IouDBInterface = Depends(dependencies.get_db),
     group_id: str,
     user_id: UserID,
+    authentication: Annotated[Authentication, Depends(dependencies.get_authentication)],
+    database: Annotated[IouDBInterface, Depends(dependencies.get_db)],
 ) -> None:
     return utils.get_group(database, group_id).add_user(
         utils.get_user(database, user_id)
@@ -84,10 +79,9 @@ def add_user(
 
 @router.get("/{group_id}/transactions", response_model=List[TransactionOut])
 def read_transactions(
-    *,
-    authentication: Authentication = Depends(dependencies.get_authentication),
-    database: IouDBInterface = Depends(dependencies.get_db),
     group_id: str,
+    authentication: Annotated[Authentication, Depends(dependencies.get_authentication)],
+    database: Annotated[IouDBInterface, Depends(dependencies.get_db)],
 ) -> List[TransactionOut]:
     return [
         TransactionOut.from_orm(
@@ -99,11 +93,10 @@ def read_transactions(
 
 @router.post("/{group_id}/transactions", response_model=TransactionOut)
 def create_transaction(
-    *,
-    authentication: Authentication = Depends(dependencies.get_authentication),
-    database: IouDBInterface = Depends(dependencies.get_db),
     group_id: str,
     transaction_in: TransactionIn,
+    authentication: Annotated[Authentication, Depends(dependencies.get_authentication)],
+    database: Annotated[IouDBInterface, Depends(dependencies.get_db)],
 ) -> TransactionOut:
     deposits = [
         PartialTransaction(utils.get_user(database, user_id), amount)
@@ -127,11 +120,10 @@ def create_transaction(
 
 @router.get("/{group_id}/transactions/{transaction_id}", response_model=TransactionOut)
 def read_transaction(
-    *,
-    authentication: Authentication = Depends(dependencies.get_authentication),
-    transaction_id: str,
-    database: IouDBInterface = Depends(dependencies.get_db),
     group_id: str,
+    transaction_id: str,
+    authentication: Annotated[Authentication, Depends(dependencies.get_authentication)],
+    database: Annotated[IouDBInterface, Depends(dependencies.get_db)],
 ) -> TransactionOut:
     return TransactionOut.from_transaction(
         utils.get_transaction(database, group_id, transaction_id)
@@ -140,10 +132,9 @@ def read_transaction(
 
 @router.get("/{group_id}/balances", response_model=Dict[UserID, int])
 def read_group_balances(
-    *,
-    authentication: Authentication = Depends(dependencies.get_authentication),
-    database: IouDBInterface = Depends(dependencies.get_db),
     group_id: str,
+    authentication: Annotated[Authentication, Depends(dependencies.get_authentication)],
+    database: Annotated[IouDBInterface, Depends(dependencies.get_db)],
 ) -> Dict[UserID, int]:
     return {
         UserID(user.user_id): balance
@@ -153,11 +144,10 @@ def read_group_balances(
 
 @router.get("/{group_id}/balances/{user_id}", response_model=int)
 def read_group_user_balance(
-    *,
-    authentication: Authentication = Depends(dependencies.get_authentication),
-    database: IouDBInterface = Depends(dependencies.get_db),
     group_id: str,
     user_id: UserID,
+    authentication: Annotated[Authentication, Depends(dependencies.get_authentication)],
+    database: Annotated[IouDBInterface, Depends(dependencies.get_db)],
 ) -> int:
     return utils.get_group(database, group_id).balance_for(
         utils.get_user(database, user_id)
