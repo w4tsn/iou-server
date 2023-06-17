@@ -47,7 +47,7 @@ class IouDBInterface(BaseModel, ABC):
         pass
 
     @abstractmethod
-    def get_group(self, group_id: str) -> Optional[Group]:
+    def get_group(self, group_id: str) -> NamedGroup | Group | None:
         pass
 
     @abstractmethod
@@ -63,5 +63,5 @@ class IouDBInterface(BaseModel, ABC):
         pass
 
     @abstractmethod
-    def groups(self) -> Dict[str, Group]:
+    def groups(self) -> Dict[str, NamedGroup | Group | None]:
         pass

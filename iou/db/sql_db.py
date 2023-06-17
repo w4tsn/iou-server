@@ -157,12 +157,17 @@ class SqlDb(IouDBInterface):
             session.add(user)
         return User(**jsonable_encoder(user))
 
-    def get_groups(self) -> List[Group]:
+    def get_groups(self) -> List[NamedGroup | Group]:
         with self.connection() as session:
             groups: List[GroupSchema] = (
                 session.query(GroupSchema).offset(0).limit(25).all()
             )
-            return [Group(**jsonable_encoder(group)) for group in groups]
+            return [
+                NamedGroup(**jsonable_encoder(group))
+                if group.name is not None
+                else Group(**jsonable_encoder(group))
+                for group in groups
+            ]
 
     def add_group(self, group: NamedGroup) -> None:
         with self.connection() as session:
@@ -199,7 +204,7 @@ class SqlDb(IouDBInterface):
     def users(self) -> Dict[str, User]:
         return {user.user_id: user for user in self.get_users()}
 
-    def groups(self) -> Dict[str, Group]:
+    def groups(self) -> Dict[str, NamedGroup | Group | None]:
         return {group.group_id: group for group in self.get_groups()}
 
     def _to_db_schema(self, group: NamedGroup) -> GroupSchema:
