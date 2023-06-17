@@ -29,3 +29,6 @@ class UserUpdate(UserBase):
 
 class UserOut(UserBase):
     user_id: UserID
+
+    class Config:
+        orm_mode = True

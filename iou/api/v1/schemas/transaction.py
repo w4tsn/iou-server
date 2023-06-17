@@ -37,3 +37,6 @@ class TransactionOut(TransactionBase):
             deposits=deposits,
             withdrawals=withdrawals,
         )
+
+    class Config:
+        orm_mode = True

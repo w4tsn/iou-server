@@ -20,3 +20,6 @@ class GroupUpdate(GroupBase):
 class GroupOut(GroupBase):
     group_id: str
     users: List[UserOut]
+
+    class Config:
+        orm_mode = True

@@ -18,8 +18,8 @@ router = APIRouter()
 def read_users(
     authentication: Authentication = Depends(dependencies.get_authentication),
     database: IouDBInterface = Depends(dependencies.get_db),
-) -> List[User]:
-    return [user for _, user in database.users().items()]
+) -> List[UserOut]:
+    return [UserOut.from_orm(user) for _, user in database.users().items()]
 
 
 @router.post("", response_model=UserOut)
@@ -28,10 +28,10 @@ def create_user(
     authentication: Authentication = Depends(dependencies.get_authentication),
     database: IouDBInterface = Depends(dependencies.get_db),
     new_user: UserIn,
-) -> User:
+) -> UserOut:
     user = User(**new_user.dict())
     database.add_user(user)
-    return user
+    return UserOut(**user.dict())
 
 
 @router.get("/{user_id}", response_model=UserOut)
@@ -40,8 +40,8 @@ def read_user(
     authentication: Authentication = Depends(dependencies.get_authentication),
     database: IouDBInterface = Depends(dependencies.get_db),
     user_id: UserID,
-) -> User:
-    return utils.get_user(database, user_id)
+) -> UserOut:
+    return UserOut.from_orm(utils.get_user(database, user_id))
 
 
 @router.patch("/{user_id}", response_model=UserOut)
@@ -51,8 +51,8 @@ def patch_user(
     user_id: UserID,
     database: IouDBInterface = Depends(dependencies.get_db),
     user_update: UserUpdate,
-) -> User:
-    return database.update_user(user_id, User(**user_update.dict()))
+) -> UserOut:
+    return UserOut.from_orm(database.update_user(user_id, User(**user_update.dict())))
 
 
 @router.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -71,8 +71,10 @@ def read_user_groups(
     authentication: Authentication = Depends(dependencies.get_authentication),
     database: IouDBInterface = Depends(dependencies.get_db),
     user_id: UserID,
-) -> List[Group]:
-    return utils.get_user(database, user_id).groups
+) -> List[GroupOut]:
+    return [
+        GroupOut.from_orm(group) for group in utils.get_user(database, user_id).groups
+    ]
 
 
 @router.get("/{user_id}/balance", response_model=int)

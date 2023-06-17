@@ -20,8 +20,8 @@ router = APIRouter()
 def read_groups(
     authentication: Authentication = Depends(dependencies.get_authentication),
     database: IouDBInterface = Depends(dependencies.get_db),
-) -> List[Group]:
-    return [group for _, group in database.groups().items()]
+) -> List[GroupOut]:
+    return [GroupOut.from_orm(group) for _, group in database.groups().items()]
 
 
 @router.post("", response_model=GroupOut)
@@ -30,10 +30,10 @@ def create_group(
     authentication: Authentication = Depends(dependencies.get_authentication),
     database: IouDBInterface = Depends(dependencies.get_db),
     new_group: GroupIn,
-) -> NamedGroup:
+) -> GroupOut:
     group = NamedGroup(**new_group.dict())
     database.add_group(group)
-    return group
+    return GroupOut(**group.dict())
 
 
 @router.get("/{group_id}", response_model=GroupOut)
@@ -42,8 +42,8 @@ def read_group(
     authentication: Authentication = Depends(dependencies.get_authentication),
     database: IouDBInterface = Depends(dependencies.get_db),
     group_id: str,
-) -> Group:
-    return utils.get_group(database, group_id)
+) -> GroupOut:
+    return GroupOut.from_orm(utils.get_group(database, group_id))
 
 
 @router.patch("/{group_id}", response_model=GroupOut)
@@ -54,8 +54,8 @@ def patch_group(
     database: IouDBInterface = Depends(dependencies.get_db),
     group_update: GroupUpdate,
 ) -> GroupOut:
-    return GroupOut(
-        **database.update_group(group_id, NamedGroup(**group_update.dict())).dict()
+    return GroupOut.from_orm(
+        database.update_group(group_id, NamedGroup(**group_update.dict()))
     )
 
 
@@ -88,8 +88,13 @@ def read_transactions(
     authentication: Authentication = Depends(dependencies.get_authentication),
     database: IouDBInterface = Depends(dependencies.get_db),
     group_id: str,
-) -> List[Transaction]:
-    return utils.get_group(database, group_id).transactions
+) -> List[TransactionOut]:
+    return [
+        TransactionOut.from_orm(
+            transaction
+            for transaction in utils.get_group(database, group_id).transactions
+        )
+    ]
 
 
 @router.post("/{group_id}/transactions", response_model=TransactionOut)
