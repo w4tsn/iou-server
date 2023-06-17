@@ -1,4 +1,5 @@
 import json
+import os
 from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import Any, Dict, Generator
@@ -254,25 +255,33 @@ class TestAPIMockDB(AbstractTestAPI):
 class TestAPISqlDB(AbstractTestAPI):
     @pytest.fixture(scope="session", autouse=True)
     def cleanup_db(self) -> None:
-        # Only initialize db within the context of this method
-        # pylint: disable=import-outside-toplevel
-        from iou.db.sql_db import dispose_database_tables
-
-        dispose_database_tables()
+        try:
+            os.remove("sqlite:///./iou_test.db")
+        except FileNotFoundError:
+            pass
 
     @pytest.fixture(scope="function", autouse=True)
     def init(self) -> Generator[None, None, None]:
         # Only initialize db within the context of this method
         # pylint: disable=import-outside-toplevel
-        from iou.db.sql_db import dispose_database_tables, init_database_tables
+        from iou.db.sql_db import SqlDb, engine_builder
 
-        init_database_tables()
+        database = SqlDb(engine_builder("sqlite:///./iou_test.db"))
+        database.init_database_tables()
         yield
-        dispose_database_tables()
+        database.dispose_database_tables()
+
+    @pytest.fixture(autouse=True)
+    def use_test_db_in_fastapi(self) -> Generator[None, None, None]:
+        from iou.db.sql_db import SqlDb, engine_builder
+
+        app.dependency_overrides[get_db] = lambda: SqlDb(
+            engine_builder("sqlite:///./iou_test.db")
+        )
+        yield
+        app.dependency_overrides = {}
 
     def create_db(self) -> None:
-        # Only initialize db within the context of this method
-        # pylint: disable=import-outside-toplevel
-        from iou.db.sql_db import SqlDb
+        from iou.db.sql_db import SqlDb, engine_builder
 
-        self.database = SqlDb.instance()
+        self.database = SqlDb(engine_builder("sqlite:///./iou_test.db"))

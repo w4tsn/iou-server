@@ -7,6 +7,6 @@ htmlcov/
 pytest-cobertura.xml
 iou/_version.py
 dist/
-test.db
+iou_test.db
 iou.db
 .mypy_cache
