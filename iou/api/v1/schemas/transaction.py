@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 from pydantic import BaseModel
 
@@ -10,7 +10,7 @@ from iou.lib.transaction import Transaction
 
 class TransactionBase(BaseModel):
     split_type: SplitType
-    date: Optional[datetime]
+    date: datetime | None
 
 
 class TransactionIn(TransactionBase):

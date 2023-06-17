@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List
 
 from pydantic import BaseModel
 
@@ -6,7 +6,7 @@ from iou.api.v1.schemas.user import UserOut
 
 
 class GroupBase(BaseModel):
-    name: Optional[str]
+    name: str | None
 
 
 class GroupIn(GroupBase):
@@ -14,7 +14,7 @@ class GroupIn(GroupBase):
 
 
 class GroupUpdate(GroupBase):
-    name: Optional[str]
+    name: str | None
 
 
 class GroupOut(GroupBase):

@@ -8,7 +8,7 @@ authors = [
     { name = "Alexander Wellbrock", email = "a.wellbrock@mailbox.org" },
     { name = "Victor Schümmer", email = "notourserver+dev@posteo.net" }
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = [
     "pydantic>=1.9,<2.0",
     "fastapi[all]>=0.74,<1.0",

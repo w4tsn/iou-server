@@ -2,7 +2,7 @@ import logging
 from contextlib import contextmanager
 from timeit import default_timer as timer
 from types import TracebackType
-from typing import Dict, Generator, List, Optional
+from typing import Dict, Generator, List
 
 from fastapi import HTTPException, status
 from fastapi.encoders import jsonable_encoder
@@ -137,10 +137,10 @@ class SqlDb(IouDBInterface):
         with self.connection() as session:
             session.add(UserSchema(**user.dict()))
 
-    def _get_user(self, session: Session, user_id: str) -> Optional[UserSchema]:
+    def _get_user(self, session: Session, user_id: str) -> UserSchema | None:
         return session.query(UserSchema).filter(UserSchema.user_id == user_id).first()
 
-    def get_user(self, user_id: str) -> Optional[User]:
+    def get_user(self, user_id: str) -> User | None:
         with self.connection() as session:
             return User(**jsonable_encoder(self._get_user(session, user_id)))
 
@@ -180,11 +180,11 @@ class SqlDb(IouDBInterface):
                 group_as_schema.users.append(user_from_db)
             session.add(group_as_schema)
 
-    def _get_group(self, session: Session, group_id: str) -> Optional[GroupSchema]:
+    def _get_group(self, session: Session, group_id: str) -> GroupSchema | None:
         group: GroupSchema = session.query(GroupSchema).get(group_id)  # type: ignore
         return group
 
-    def get_group(self, group_id: str) -> Optional[Group]:
+    def get_group(self, group_id: str) -> Group | None:
         with self.connection() as session:
             return Group(**jsonable_encoder(self._get_group(session, group_id)))
 
@@ -204,7 +204,7 @@ class SqlDb(IouDBInterface):
     def users(self) -> Dict[str, User]:
         return {user.user_id: user for user in self.get_users()}
 
-    def groups(self) -> Dict[str, NamedGroup | Group | None]:
+    def groups(self) -> Dict[str, NamedGroup | Group]:
         return {group.group_id: group for group in self.get_groups()}
 
     def _to_db_schema(self, group: NamedGroup) -> GroupSchema:

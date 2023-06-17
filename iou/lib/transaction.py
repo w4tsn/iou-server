@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from functools import reduce
-from typing import Any, List, Optional, Set
+from typing import Any, List, Set
 
 from pydantic import BaseModel, Field
 
@@ -33,8 +33,8 @@ class PartialTransaction(BaseModel):
 
 
 class Transaction(BaseModel):
-    transaction_id: Optional[ID] = Field(default_factory=ID.generate)
-    split_type: Optional[SplitType] = None
+    transaction_id: ID | None = Field(default_factory=ID.generate)
+    split_type: SplitType | None = None
     deposits: List[PartialTransaction]
     withdrawals: List[PartialTransaction] = []
     date: datetime = datetime.now()
@@ -42,7 +42,7 @@ class Transaction(BaseModel):
     def __init__(
         self,
         *args: Any,
-        split: Optional[SplitStrategy] = None,
+        split: SplitStrategy | None = None,
         **kwargs: Any,
     ) -> None:
         super().__init__(*args, **kwargs)

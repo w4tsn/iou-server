@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 from iou.db.db_interface import IouDBInterface
 from iou.lib.group import Group, NamedGroup
@@ -9,7 +9,7 @@ from iou.lib.user import User
 
 class MockDB(IouDBInterface):
     _users: Dict[str, User] = {}
-    _groups: Dict[str, Group] = {}
+    _groups: Dict[str, NamedGroup | Group] = {}
 
     def get_users(self) -> List[User]:
         return list(self._users.values())
@@ -17,7 +17,7 @@ class MockDB(IouDBInterface):
     def add_user(self, user: User) -> None:
         self._users[user.user_id] = user
 
-    def get_user(self, user_id: str) -> Optional[User]:
+    def get_user(self, user_id: str) -> User | None:
         return self._users[user_id]
 
     def delete_user(self, user_id: str) -> None:
@@ -31,7 +31,7 @@ class MockDB(IouDBInterface):
     def add_group(self, group: NamedGroup) -> None:
         self._groups[group.group_id] = group
 
-    def get_group(self, group_id: str) -> Optional[Group]:
+    def get_group(self, group_id: str) -> Group | None:
         return self._groups[group_id]
 
     def update_group(self, group_id: str, group_update: NamedGroup) -> NamedGroup:
@@ -47,5 +47,5 @@ class MockDB(IouDBInterface):
     def users(self) -> Dict[str, User]:
         return self._users
 
-    def groups(self) -> Dict[str, Group]:
+    def groups(self) -> Dict[str, NamedGroup | Group]:
         return self._groups

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from abc import ABC, abstractmethod
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 from pydantic import BaseModel
 
@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 class IouDBInterface(BaseModel, ABC):
-    _instance: Optional[IouDBInterface] = None
+    _instance: IouDBInterface | None = None
 
     @classmethod
     def instance(cls) -> "IouDBInterface":
@@ -31,7 +31,7 @@ class IouDBInterface(BaseModel, ABC):
         pass
 
     @abstractmethod
-    def get_user(self, user_id: str) -> Optional[User]:
+    def get_user(self, user_id: str) -> User | None:
         pass
 
     @abstractmethod
@@ -63,5 +63,5 @@ class IouDBInterface(BaseModel, ABC):
         pass
 
     @abstractmethod
-    def groups(self) -> Dict[str, NamedGroup | Group | None]:
+    def groups(self) -> Dict[str, NamedGroup | Group]:
         pass

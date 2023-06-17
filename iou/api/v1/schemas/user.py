@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel
 
@@ -14,8 +14,8 @@ class UserID(ID):
 
 
 class UserBase(BaseModel):
-    name: Optional[str]
-    email: Optional[str]
+    name: str | None
+    email: str | None
 
 
 class UserIn(UserBase):
@@ -23,8 +23,8 @@ class UserIn(UserBase):
 
 
 class UserUpdate(UserBase):
-    name: Optional[str]
-    email: Optional[str]
+    name: str | None
+    email: str | None
 
 
 class UserOut(UserBase):

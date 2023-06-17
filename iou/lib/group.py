@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import uuid
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 from pydantic import BaseModel, Field
 
@@ -55,7 +55,7 @@ class Group(BaseModel):
             self.deposits_by(user)
         ) - PartialTransaction.reduce(self.withdrawals_by(user))
 
-    def transaction(self, transaction_id: str) -> Optional[Transaction]:
+    def transaction(self, transaction_id: str) -> Transaction | None:
         """Get a transaction from this group"""
         try:
             transaction = [
@@ -74,7 +74,7 @@ class Group(BaseModel):
 
 class NamedGroup(Group):
     name: str = str(uuid.uuid4())
-    description: Optional[str] = None
+    description: str | None = None
 
     class Config:
         orm_mode = True
