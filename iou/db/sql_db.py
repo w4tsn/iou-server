@@ -184,9 +184,16 @@ class SqlDb(IouDBInterface):
         group: GroupSchema = session.query(GroupSchema).get(group_id)  # type: ignore
         return group
 
-    def get_group(self, group_id: str) -> Group | None:
+    def get_group(self, group_id: str) -> NamedGroup | Group | None:
         with self.connection() as session:
-            return Group(**jsonable_encoder(self._get_group(session, group_id)))
+            group = self._get_group(session, group_id)
+            if group is None:
+                return None
+            return (
+                NamedGroup(**jsonable_encoder(group))
+                if group.name is not None
+                else Group(**jsonable_encoder(group))
+            )
 
     def update_group(self, group_id: str, group_update: NamedGroup) -> NamedGroup:
         update = group_update.dict(exclude_unset=True)
