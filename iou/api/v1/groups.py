@@ -84,10 +84,8 @@ def read_transactions(
     database: Annotated[IouDBInterface, Depends(dependencies.get_db)],
 ) -> List[TransactionOut]:
     return [
-        TransactionOut.from_orm(
-            transaction
-            for transaction in utils.get_group(database, group_id).transactions
-        )
+        TransactionOut.from_orm(transaction)
+        for transaction in utils.get_group(database, group_id).transactions
     ]
 
 
