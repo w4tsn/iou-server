@@ -10,7 +10,7 @@ from iou.lib.transaction import Transaction
 
 class TransactionBase(BaseModel):
     split_type: SplitType
-    date: datetime | None
+    date: datetime | None = datetime.now()
 
 
 class TransactionIn(TransactionBase):
