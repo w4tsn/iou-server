@@ -49,7 +49,11 @@ class EqualSplitStrategy(SplitStrategy):
     split_type: ClassVar[SplitType] = SplitType.EQUAL
 
     def withdrawers(self) -> List[User]:
-        return list(self.split_parameters.keys())
+        withdrawers_override = list(self.split_parameters.keys())
+        if len(withdrawers_override) > 0:
+            return withdrawers_override
+        else:
+            return [deposit.user for deposit in self.deposits]
 
     def compute_split(self) -> List[PartialTransaction]:
         share = self.total() / len(self.withdrawers())
